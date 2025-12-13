@@ -2,8 +2,8 @@
 '''
 Author       : tom-snow
 Date         : 2022-03-17 11:32:32
-LastEditTime : 2022-03-17 12:17:34
-LastEditors  : tom-snow
+LastEditTime : 2025-11-04 11:28:05
+LastEditors  : pluwen
 Description  : 
 FilePath     : /awesome-testflight-link/scripts/order_status.py
 '''
@@ -16,7 +16,8 @@ TABLE_MAP = {
     "ios": "./data/ios.md",
     "ios_game": "./data/ios_game.md",
     "chinese": "./data/chinese.md",
-    "signup": "./data/signup.md"
+    "signup": "./data/signup.md",
+    "tvos": "./data/tvos.md"
 }
 README_TEMPLATE_FILE = "./data/README.template"
 
@@ -53,7 +54,11 @@ def renew_doc(data_file, table):
         if apps:  # Only create section if there are apps with this status
             # Create collapsible section with enhanced formatting
             app_count = len(apps)
-            markdown.append(f"<details>\n")
+            # 默认展开 Available 部分，其余状态保持收起
+            if status_code == 'Y':
+                markdown.append(f"<details open>\n")
+            else:
+                markdown.append(f"<details>\n")
             markdown.append(f"<summary><strong>{status_data['name']} ({app_count} app{'s' if app_count != 1 else ''})</strong> - {status_data['description']}</summary>\n\n")
             
             # Add helpful note for Available apps
@@ -99,13 +104,22 @@ def renew_readme():
     signup = ""
     with open(TABLE_MAP["signup"], 'r') as f:
         signup = f.read()
-    readme = template.replace("#{macos}", macos).replace("#{ios}", ios).replace("#{ios_game}", ios_game).replace("#{chinese}", chinese).replace("#{signup}", signup)
+    tvos = ""
+    # tvos may not exist in some setups; read safely
+    try:
+        with open(TABLE_MAP["tvos"], 'r') as f:
+            tvos = f.read()
+    except Exception:
+        tvos = ""
+
+    readme = template.replace("#{macos}", macos).replace("#{ios}", ios).replace("#{ios_game}", ios_game).replace("#{chinese}", chinese).replace("#{tvos}", tvos).replace("#{signup}", signup)
     with open("../README.md", 'w') as f:
         f.write(readme)
 
 def main():
     for table in TABLE_MAP:
-        if table == "signup": # 数据库没有此表
+        # Skip signup because it's collected separately if present
+        if table == "signup":
             continue
 
         renew_doc(TABLE_MAP[table], table)

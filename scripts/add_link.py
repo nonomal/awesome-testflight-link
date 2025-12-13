@@ -2,8 +2,8 @@
 '''
 Author       : tom-snow
 Date         : 2022-03-16 19:32:32
-LastEditTime : 2022-04-24 17:27:07
-LastEditors  : tom-snow
+LastEditTime : 2025-11-04 11:28:05
+LastEditors  : pluwen
 Description  : 
 FilePath     : /awesome-testflight-link/scripts/add_link.py
 '''
@@ -18,6 +18,7 @@ BASE_URL = "https://testflight.apple.com/"
 TABLE_MAP = {
     "macos": "./data/macos.md",
     "ios": "./data/ios.md",
+    "tvos": "./data/tvos.md",
     "ios_game": "./data/ios_game.md",
     "chinese": "./data/chinese.md",
     "signup": "./data/signup.md"
@@ -32,48 +33,83 @@ APP_NAME_PATTERN = re.compile(r"Join the (.+) beta - TestFlight - Apple")
 APP_NAME_CH_PATTERN = re.compile(r"加入 Beta 版“(.+)” - TestFlight - Apple")
 
 def renew_doc(data_file, table):
-    # header
-    markdown = []
-    with open(data_file, 'r') as f:
-        lines = f.readlines()
-        for line in lines:
-            columns = [ column.strip() for column in line.split("|") ]
-            markdown.append(line)
-            if len(columns) > 2 and re.match(r"^:?-+:?$", columns[1]):
-                break
-    # 
+    # Read title from existing file (first line)
+    title = ""
+    try:
+        with open(data_file, 'r') as f:
+            title = f.readline().strip()
+    except Exception:
+        title = os.path.basename(data_file)
+
+    # Connect to database and get apps by status
     conn = sqlite3.connect('../db/sqlite3.db')
     cur = conn.cursor()
-    res = cur.execute(f"SELECT app_name, testflight_link, status, last_modify FROM {table} ORDER BY app_name;")
-    for row in res:
-        app_name, testflight_link, status, last_modify = row
-        testflight_link = f"[https://testflight.apple.com/join/{testflight_link}](https://testflight.apple.com/join/{testflight_link})"
-        markdown.append(f"| {app_name} | {testflight_link} | {status} | {last_modify} |\n")
+
+    status_info = {
+        'Y': {'name': 'Available', 'description': 'Apps currently accepting new testers'},
+        'F': {'name': 'Full', 'description': 'Apps that have reached their tester limit'},
+        'N': {'name': 'No', 'description': 'Apps not currently accepting testers'},
+        'D': {'name': 'Removed', 'description': 'Apps that have been removed from TestFlight'}
+    }
+
+    markdown = [f"{title}\n\n"]
+
+    for status_code in ['Y', 'F', 'N', 'D']:
+        status_data = status_info[status_code]
+        res = cur.execute(f"""SELECT app_name, testflight_link, status, last_modify FROM {table} 
+                             WHERE status = ? ORDER BY app_name""", (status_code,))
+        apps = res.fetchall()
+
+        if apps:
+            app_count = len(apps)
+            # 默认展开 Available 部分，其余状态保持收起
+            if status_code == 'Y':
+                markdown.append(f"<details open>\n")
+            else:
+                markdown.append(f"<details>\n")
+            markdown.append(f"<summary><strong>{status_data['name']} ({app_count} app{'s' if app_count != 1 else ''})</strong> - {status_data['description']}</summary>\n\n")
+
+            if status_code == 'Y' and app_count > 0:
+                markdown.append(f"_✅ These {app_count} apps are currently accepting new testers! Click the links to join._\n\n")
+            elif status_code == 'F' and app_count > 0:
+                markdown.append(f"_⚠️ These {app_count} apps have reached their tester limit. Try checking back later._\n\n")
+
+            markdown.append("| Name | TestFlight Link | Status | Last Updated |\n")
+            markdown.append("| --- | --- | --- | --- |\n")
+
+            for app_name, testflight_link, status, last_modify in apps:
+                full_link = f"https://testflight.apple.com/join/{testflight_link}"
+                markdown_link = f"[{full_link}]({full_link})"
+                markdown.append(f"| {app_name} | {markdown_link} | {status} | {last_modify} |\n")
+
+            markdown.append("\n</details>\n\n")
+
     conn.close()
-    # 
+
     with open(data_file, 'w') as f:
-        lines = f.writelines(markdown)
+        f.writelines(markdown)
 
 def renew_readme():
     template = ""
     with open(README_TEMPLATE_FILE, 'r') as f:
         template = f.read()
-    macos = ""
-    with open(TABLE_MAP["macos"], 'r') as f:
-        macos = f.read()
-    ios = ""
-    with open(TABLE_MAP["ios"], 'r') as f:
-        ios = f.read()
-    ios_game = ""
-    with open(TABLE_MAP["ios_game"], 'r') as f:
-        ios_game = f.read()
-    chinese = ""
-    with open(TABLE_MAP["chinese"], 'r') as f:
-        chinese = f.read()
-    signup = ""
-    with open(TABLE_MAP["signup"], 'r') as f:
-        signup = f.read()
-    readme = template.format(macos=macos, ios=ios, ios_game=ios_game, chinese=chinese, signup=signup)
+
+    def safe_read(path):
+        try:
+            with open(path, 'r') as fh:
+                return fh.read()
+        except Exception:
+            return ""
+
+    macos = safe_read(TABLE_MAP.get("macos"))
+    ios = safe_read(TABLE_MAP.get("ios"))
+    tvos = safe_read(TABLE_MAP.get("tvos"))
+    ios_game = safe_read(TABLE_MAP.get("ios_game"))
+    chinese = safe_read(TABLE_MAP.get("chinese"))
+    signup = safe_read(TABLE_MAP.get("signup"))
+
+    # use exact placeholder replacement to match README.template
+    readme = template.replace("#{macos}", macos).replace("#{ios}", ios).replace("#{ios_game}", ios_game).replace("#{chinese}", chinese).replace("#{tvos}", tvos).replace("#{signup}", signup)
     with open("../README.md", 'w') as f:
         f.write(readme)
 
