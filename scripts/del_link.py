@@ -1,106 +1,34 @@
 #!/usr/bin/python
-'''
-Author       : tom-snow
-Date         : 2022-03-16 19:32:32
-LastEditTime : 2022-04-24 17:27:30
-LastEditors  : tom-snow
-Description  : 
-FilePath     : /awesome-testflight-link/scripts/del_link.py
-'''
-
-import sqlite3
-import re, os, sys
-
-TABLE_MAP = {
-    "macos": "./data/macos.md",
-    "ios": "./data/ios.md",
-    "ios_game": "./data/ios_game.md",
-    "chinese": "./data/chinese.md",
-    "signup": "./data/signup.md"
-}
-README_TEMPLATE_FILE = "./data/README.template"
-
-
-def renew_doc(data_file, table):
-    # header
-    markdown = []
-    with open(data_file, 'r') as f:
-        lines = f.readlines()
-        for line in lines:
-            columns = [ column.strip() for column in line.split("|") ]
-            markdown.append(line)
-            if len(columns) > 2 and re.match(r"^:?-+:?$", columns[1]):
-                break
-    # 
-    conn = sqlite3.connect('../db/sqlite3.db')
-    cur = conn.cursor()
-    res = cur.execute(f"SELECT app_name, testflight_link, status, last_modify FROM {table} ORDER BY app_name;")
-    for row in res:
-        app_name, testflight_link, status, last_modify = row
-        testflight_link = f"[https://testflight.apple.com/join/{testflight_link}](https://testflight.apple.com/join/{testflight_link})"
-        markdown.append(f"| {app_name} | {testflight_link} | {status} | {last_modify} |\n")
-    conn.close()
-    # 
-    with open(data_file, 'w') as f:
-        lines = f.writelines(markdown)
-
-def renew_readme():
-    template = ""
-    with open(README_TEMPLATE_FILE, 'r') as f:
-        template = f.read()
-    macos = ""
-    with open(TABLE_MAP["macos"], 'r') as f:
-        macos = f.read()
-    ios = ""
-    with open(TABLE_MAP["ios"], 'r') as f:
-        ios = f.read()
-    ios_game = ""
-    with open(TABLE_MAP["ios_game"], 'r') as f:
-        ios_game = f.read()
-    chinese = ""
-    with open(TABLE_MAP["chinese"], 'r') as f:
-        chinese = f.read()
-    signup = ""
-    with open(TABLE_MAP["signup"], 'r') as f:
-        signup = f.read()
-    readme = template.format(macos=macos, ios=ios, ios_game=ios_game, chinese=chinese, signup=signup)
-    with open("../README.md", 'w') as f:
-        f.write(readme)
+import sys
+import re
+from utils import TABLE_MAP, renew_doc, renew_readme, load_links, save_links
 
 def main():
+    if len(sys.argv) < 3:
+        print("Usage: python del_link.py <testflight_link> <table>")
+        sys.exit(1)
+
     testflight_link = sys.argv[1]
     table = sys.argv[2].lower()
-    
-    link_id_match = re.search(r"^https://testflight.apple.com/join/(.*)$", testflight_link, re.I)
-    if link_id_match is not None:
+
+    link_id_match = re.search(r"join/(.*)$", testflight_link, re.I)
+    if link_id_match:
         testflight_link = link_id_match.group(1)
+
+    if table not in TABLE_MAP:
+        print(f"[Error] Invalid table: {table}. Exit...")
+        sys.exit(1)
+
+    links_data = load_links()
+    if table in links_data and testflight_link in links_data[table]:
+        del links_data[table][testflight_link]
+        save_links(links_data)
+        print(f"[info] Deleted {testflight_link} from {table}")
     else:
-        print(f"[Error] Invalid testflight_link. Exit...")
-        exit(1)
+        print(f"[warn] Link {testflight_link} not found in {table}")
 
-    if table not in TABLE_MAP or table == "signup":
-        print(f"[Error] Invalid table. Exit...")
-        exit(1)
-
-    # 从数据库删除
-    conn = sqlite3.connect('../db/sqlite3.db')
-    cur = conn.cursor()    
-    sql = f"SELECT * FROM {table} WHERE testflight_link = '{testflight_link}';"
-    res = cur.execute(sql)
-    if len(list(res)) == 0:
-        print(f"[warn] Data (https://testflight.apple.com/join/{testflight_link}) not found in table ({table}).")
-        exit(0)
-    
-    sql = f"DELETE FROM {table} WHERE testflight_link = '{testflight_link}';"
-    cur.execute(sql)
-    conn.commit()
-    print(f"[info] Deleted {conn.total_changes} row(s) into table: {table}")
-    conn.close()
-
-    renew_doc(TABLE_MAP[table], table)
+    renew_doc(table, links_data)
     renew_readme()
 
 if __name__ == "__main__":
-    os.chdir(sys.path[0])
-    
     main()
