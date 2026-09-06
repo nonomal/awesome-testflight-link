@@ -1493,11 +1493,11 @@
     },
     "v29eXz9t": {
       "app_name": "Grocery-Smart Grocery List",
-      "status": "Y",
+      "status": "F",
       "tables": [
         "ios"
       ],
-      "last_modify": "2026-07-17"
+      "last_modify": "2026-09-06"
     },
     "5k0dF9zs": {
       "app_name": "GROM - Get Rid of Minions",
@@ -3326,11 +3326,11 @@
     },
     "p7hGbZUR": {
       "app_name": "Snapchat",
-      "status": "Y",
+      "status": "F",
       "tables": [
         "ios"
       ],
-      "last_modify": "2026-09-05"
+      "last_modify": "2026-09-06"
     },
     "nOZ0d7n7": {
       "app_name": "Snapthread",
@@ -3631,11 +3631,11 @@
     },
     "MnuClabg": {
       "app_name": "Termius – SSH client",
-      "status": "F",
+      "status": "Y",
       "tables": [
         "ios"
       ],
-      "last_modify": "2026-09-04"
+      "last_modify": "2026-09-06"
     },
     "yo6Od7Pt": {
       "app_name": "Textulator iMessage",
@@ -4991,11 +4991,11 @@
     },
     "9JaSzwSN": {
       "app_name": "腾讯视频HD",
-      "status": "F",
+      "status": "Y",
       "tables": [
         "ios"
       ],
-      "last_modify": "2026-09-03"
+      "last_modify": "2026-09-06"
     },
     "mFlnyMv3": {
       "app_name": "UTM Remote Virtual Machines",
@@ -5281,11 +5281,11 @@
     },
     "eO265vw7": {
       "app_name": "Grindr - Gay Dating & Chat",
-      "status": "Y",
+      "status": "F",
       "tables": [
         "ios"
       ],
-      "last_modify": "2026-09-05"
+      "last_modify": "2026-09-06"
     },
     "2NZLBFyb": {
       "app_name": "Monzo Bank - Mobile Banking",
@@ -6678,11 +6678,11 @@
     },
     "cjHQ9k71": {
       "app_name": "PowerNFC",
-      "status": "F",
+      "status": "Y",
       "tables": [
         "ios"
       ],
-      "last_modify": "2026-09-03"
+      "last_modify": "2026-09-06"
     },
     "m2kxP5cw": {
       "app_name": "Notion AI",
