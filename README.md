@@ -25,9 +25,9 @@ Collect Public Testflight app URL's (iOS/iPad OS/macOS), feel free to create a i
 ## iOS App List
 
 <details open>
-<summary><strong>Available (305 apps)</strong> - Apps currently accepting new testers</summary>
+<summary><strong>Available (306 apps)</strong> - Apps currently accepting new testers</summary>
 
-_✅ These 305 apps are currently accepting new testers! Click the links to join._
+_✅ These 306 apps are currently accepting new testers! Click the links to join._
 
 | Name | TestFlight Link | Status | Last Updated |
 | --- | --- | --- | --- |
@@ -54,6 +54,7 @@ _✅ These 305 apps are currently accepting new testers! Click the links to join
 | Bloomwash - Watercolor Studio | [https://testflight.apple.com/join/kGZEmvMZ](https://testflight.apple.com/join/kGZEmvMZ) | Y | 2026-08-24 |
 | BreakMate | [https://testflight.apple.com/join/qbQBdvFW](https://testflight.apple.com/join/qbQBdvFW) | Y | 2026-08-24 |
 | Buffer: Social Media Manager | [https://testflight.apple.com/join/DOpMcusn](https://testflight.apple.com/join/DOpMcusn) | Y | 2025-12-22 |
+| Bulletide: Pantry overrun | [https://testflight.apple.com/join/EFmzFhWQ](https://testflight.apple.com/join/EFmzFhWQ) | Y | 2026-09-07 |
 | Cali Pages | [https://testflight.apple.com/join/fV1dvwAq](https://testflight.apple.com/join/fV1dvwAq) | Y | 2026-06-03 |
 | Canvases | [https://testflight.apple.com/join/65RCk8Xh](https://testflight.apple.com/join/65RCk8Xh) | Y | 2026-08-24 |
 | CardHabit: TCG Habit Tracker | [https://testflight.apple.com/join/yYrE4GXV](https://testflight.apple.com/join/yYrE4GXV) | Y | 2026-06-15 |

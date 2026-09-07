@@ -7882,6 +7882,14 @@
         "macos"
       ],
       "last_modify": "2026-09-04"
+    },
+    "EFmzFhWQ": {
+      "app_name": "Bulletide: Pantry overrun",
+      "status": "Y",
+      "tables": [
+        "ios"
+      ],
+      "last_modify": "2026-09-07"
     }
   }
 }
