@@ -7899,6 +7899,15 @@
         "ipados"
       ],
       "last_modify": "2026-09-09"
+    },
+    "ze5Bhrkc": {
+      "app_name": "Burden: Purchase Check",
+      "status": "Y",
+      "tables": [
+        "ios",
+        "ipados"
+      ],
+      "last_modify": "2026-09-09"
     }
   }
 }
