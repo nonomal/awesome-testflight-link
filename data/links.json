@@ -7908,6 +7908,14 @@
         "ipados"
       ],
       "last_modify": "2026-09-09"
+    },
+    "MfvYwX9T": {
+      "app_name": "Word Wise Vocabulary",
+      "status": "Y",
+      "tables": [
+        "ios"
+      ],
+      "last_modify": "2026-09-09"
     }
   }
 }
