@@ -7890,6 +7890,15 @@
         "ios"
       ],
       "last_modify": "2026-09-07"
+    },
+    "eCSAAcQF": {
+      "app_name": "Glimshelf",
+      "status": "Y",
+      "tables": [
+        "ios",
+        "ipados"
+      ],
+      "last_modify": "2026-09-09"
     }
   }
 }
